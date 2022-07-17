@@ -28,7 +28,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, newUser)
+	c.JSON(http.StatusOK, &newUser)
 
 }
 
@@ -76,4 +76,17 @@ func DeleteUserById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "user deleted"})
 
+}
+
+func UpdateUserById(c *gin.Context) {
+	var user models.User
+	db := config.GetDB()
+
+	if err := db.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found!"})
+		return
+	}
+	c.BindJSON(&user)
+
+	c.JSON(http.StatusOK, gin.H{"message": "user deleted"})
 }
