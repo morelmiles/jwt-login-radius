@@ -20,7 +20,7 @@ func CreatePost(c *gin.Context) {
 		return
 	}
 
-	newPost := models.Post{Title: post.Title, Content: post.Content, CoverImage: post.CoverImage ,Author: post.Author }
+	newPost := models.Post{Title: post.Title, Content: post.Content, CoverImage: post.CoverImage, Author: post.Author}
 
 	if err := db.Create(&newPost).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -75,4 +75,17 @@ func DeletePostById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "post deleted"})
 
+}
+
+func UpdatePostById(c *gin.Context) {
+	var post models.Post
+	db := config.GetDB()
+
+	if err := db.Where("id = ?", c.Param("id")).First(&post).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "post not found!"})
+		return
+	}
+	c.BindJSON(&post)
+
+	c.JSON(http.StatusOK, gin.H{"message": "post deleted"})
 }
